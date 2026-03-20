@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Invoice Maker - Professional Billing App</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f5f5;
+            padding: 15px;
+            color: #111;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* Settings Panel */
+        .settings-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #2c3e50;
+        }
+        
+        .settings-panel h3 {
+            color: #1a2b3c;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #1a2b3c;
+            padding-bottom: 8px;
+        }
+        
+        .business-logo {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .business-logo img {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 10px;
+        }
+        
+        .premium-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #2c3e50;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 15px 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background: #34495e;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            color: #1a2b3c;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #1a2b3c;
+            padding-bottom: 8px;
+        }
+        
+        .data-bar {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2c3e50;
+        }
+        
+        .data-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .data-stat {
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .data-stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a2b3c;
+            display: block;
+        }
+        
+        .data-stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #222;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .product-row {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .product-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .product-inputs input {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .totals {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(255,255,255,0.2);
+        }
+        
+        .grand-total {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            color: white;
+        }
+        
+        .btn-primary { background: #2c3e50; }
+        .btn-success { background: #28a745; }
+        .btn-danger { background: #dc3545; }
+        .btn-whatsapp { background: #25D366; }
+        .btn-info { background: #17a2b8; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-premium { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .btn-small { padding: 6px 10px; font-size: 12px; }
+        
+        .invoice-preview {
+            display: none;
+            background: white;
+            padding: 20px;
+            border: 2px solid #2c3e50;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            display: none;
+            z-index: 1001;
+        }
+        
+        .toast.error { background: #dc3545; }
+        
+        .upgrade-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .upgrade-card h3 { color: white; border-bottom-color: rgba(255,255,255,0.3); }
+        
+        @media (max-width: 768px) {
+            .tabs { flex-direction: column; }
+            .product-inputs { flex-direction: column; }
+            .button-group { grid-template-columns: 1fr; }
+        }
+        
+        @media print {
+            body * { visibility: hidden; }
+            .invoice-preview, .invoice-preview * { visibility: visible; }
+            .invoice-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; margin-bottom: 15px; color: #1a2b3c;">
+            Easy Invoice Maker 
+            <span class="premium-badge" onclick="showUpgradeModal()">⭐ PRO</span>
+        </h1>
+        
+        <!-- Business Info Display -->
+        <div class="settings-panel" id="businessInfoDisplay">
+            <div class="business-logo" id="businessLogoDisplay">
+                <img id="logoImage" src="" style="display: none;" alt="Business Logo">
+            </div>
+            <h3 id="businessNameDisplay">My Business</h3>
+            <div id="businessDetailsDisplay" style="font-size: 14px; color: #666;"></div>
+        </div>
+        
+        <div class="data-bar">
+            <div class="data-stats">
+                <div class="data-stat">
+                    <span class="data-stat-value" id="ordersCount">0</span>
+                    <span class="data-stat-label">Invoices</span>
+                </div>
+                <div class="data-stat">
+                    <span class="data-stat-value" id="customersCount">0</span>
+                    <span class="data-stat-label">Customers</span>
+                </div>
+                <div class="data-stat">
+                    <span class="data-stat-value" id="revenueCount">0</span>
+                    <span class="data-stat-label">Revenue (PKR)</span>
+                </div>
+            </div>
+            <div class="data-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="switchTab('settings')">⚙️ Business Settings</button>
+                <button class="btn btn-info" onclick="exportData()">📤 Export Data</button>
+                <button class="btn btn-warning" onclick="showImportModal()">📥 Import</button>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('create')">➕ Create Invoice</button>
+            <button class="tab-btn" onclick="switchTab('orders')">📋 Invoices</button>
+            <button class="tab-btn" onclick="switchTab('customers')">👥 Customers</button>
+            <button class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</button>
+        </div>
+        
+        <!-- CREATE INVOICE TAB -->
+        <div id="create" class="tab-content active">
+            <div class="card">
+                <h3>👤 Customer Information</h3>
+                <input type="text" id="customerName" placeholder="Full Name *">
+                <input type="tel" id="customerPhone" placeholder="Phone Number *" style="margin-top:10px">
+                <textarea id="customerAddress" placeholder="Complete Address" rows="3" style="margin-top:10px"></textarea>
+            </div>
+            
+            <div class="card">
+                <h3>🛒 Products / Services</h3>
+                <div id="productsContainer">
+                    <div class="product-row">
+                        <div class="product-inputs">
+                            <input type="text" class="productName" placeholder="Item Name">
+                            <input type="number" class="productQty" placeholder="Qty" value="1">
+                            <input type="number" class="productPrice" placeholder="Price (PKR)">
+                        </div>
+                        <button class="btn btn-danger btn-small" onclick="removeProduct(this)">Remove</button>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="addProduct()">+ Add Item</button>
+            </div>
+            
+            <div class="card">
+                <h3>💰 Payment Method</h3>
+                <select id="paymentMethodSelect" style="margin-bottom: 10px;">
+                    <option value="COD">Cash on Delivery (COD)</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="EasyPaisa">EasyPaisa</option>
+                    <option value="JazzCash">JazzCash</option>
+                    <option value="Credit Card">Credit Card</option>
+                </select>
+                <div id="advanceDetails">
+                    <input type="number" id="advanceAmount" placeholder="Advance/Paid Amount (PKR)" value="0">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📋 Invoice Details</h3>
+                <input type="number" id="discount" placeholder="Discount (PKR)" value="0">
+                <input type="number" id="shipping" placeholder="Shipping/Extra Charges" value="0" style="margin-top:10px">
+                <input type="text" id="invoiceNo" placeholder="Invoice Number" style="margin-top:10px">
+                <input type="date" id="orderDate" style="margin-top:10px">
+                <textarea id="invoiceNotes" placeholder="Additional Notes (e.g., Thank you message)" rows="2" style="margin-top:10px"></textarea>
+            </div>
+            
+            <div class="totals">
+                <div class="total-row"><span>Subtotal:</span><span id="subtotalDisplay">0 PKR</span></div>
+                <div class="total-row"><span>Discount:</span><span id="discountDisplay">0 PKR</span></div>
+                <div class="total-row"><span>Extra Charges:</span><span id="shippingDisplay">0 PKR</span></div>
+                <div class="total-row"><span>Amount Paid:</span><span id="advanceDisplay">0 PKR</span></div>
+                <div class="total-row grand-total"><span>BALANCE DUE:</span><span id="balanceDisplay">0 PKR</span></div>
+            </div>
+            
+            <div class="card">
+                <div class="button-group">
+                    <button class="btn btn-success" onclick="saveOrder()">💾 Save Invoice</button>
+                    <button class="btn btn-primary" onclick="viewInvoice()">👁️ Preview</button>
+                    <button class="btn btn-whatsapp" onclick="shareInvoice()">📱 WhatsApp</button>
+                    <button class="btn btn-info" onclick="clearForm()">🗑️ Clear</button>
+                </div>
+            </div>
+            
+            <div id="invoicePreview" class="invoice-preview"></div>
+        </div>
+        
+        <!-- INVOICES TAB -->
+        <div id="orders" class="tab-content">
+            <div class="card">
+                <h3>📋 All Invoices</h3>
+                <div class="search-box">
+                    <input type="text" id="searchOrders" placeholder="Search invoices...">
+                </div>
+                <div id="ordersContainer" class="orders-container"></div>
+            </div>
+        </div>
+        
+        <!-- CUSTOMERS TAB -->
+        <div id="customers" class="tab-content">
+            <div class="card">
+                <h3>👥 Customers</h3>
+                <div class="search-box">
+                    <input type="text" id="searchCustomers" placeholder="Search customers...">
+                </div>
+                <div id="customersContainer" class="customers-container"></div>
+            </div>
+        </div>
+        
+        <!-- SETTINGS TAB -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <h3>🏢 Business Information</h3>
+                <div class="form-group">
+                    <label>Business Name</label>
+                    <input type="text" id="businessName" placeholder="Your Business Name">
+                </div>
+                <div class="form-group">
+                    <label>Business Logo URL (or upload image)</label>
+                    <input type="text" id="businessLogo" placeholder="https://... or leave empty">
+                    <small style="color: #666;">Tip: Upload image to imgur.com and paste URL here</small>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="businessPhone" placeholder="Your contact number">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea id="businessAddress" rows="2" placeholder="Your business address"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="businessEmail" placeholder="contact@yourbusiness.com">
+                </div>
+                <div class="form-group">
+                    <label>Invoice Footer Message</label>
+                    <input type="text" id="businessFooter" placeholder="Thank you for your business!">
+                </div>
+                <button class="btn btn-success" onclick="saveBusinessSettings()">💾 Save Settings</button>
+            </div>
+            
+            <div class="upgrade-card">
+                <h3>🚀 Upgrade to PRO</h3>
+                <p style="margin: 10px 0;">Remove watermark, get cloud backup, and more!</p>
+                <button class="btn btn-premium" onclick="showUpgradeModal()">⭐ Upgrade Now - $4.99</button>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Data Management</h3>
+                <div class="button-group">
+                    <button class="btn btn-info" onclick="exportData()">📤 Export All Data</button>
+                    <button class="btn btn-warning" onclick="showImportModal()">📥 Import Data</button>
+                    <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>ℹ️ About</h3>
+                <p>Version 1.0.0</p>
+                <p>Easy Invoice Maker - Simple billing solution for small businesses</p>
+                <p>Made with ❤️ for Pakistani businesses</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODALS -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <h3>📥 Import Data</h3>
+            <textarea id="importData" rows="10" style="width:100%; margin:15px 0" placeholder='Paste exported JSON data here...'></textarea>
+            <button class="btn btn-success" onclick="importData()">Import</button>
+            <button class="btn btn-danger" onclick="hideImportModal()">Cancel</button>
+        </div>
+    </div>
+    
+    <div id="upgradeModal" class="modal">
+        <div class="modal-content">
+            <h3>⭐ Upgrade to PRO</h3>
+            <div style="margin: 20px 0;">
+                <p><strong>PRO Features:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>✅ No watermark</li>
+                    <li>✅ Cloud backup (coming soon)</li>
+                    <li>✅ PDF export with logo</li>
+                    <li>✅ Priority support</li>
+                    <li>✅ Future updates free</li>
+                </ul>
+            </div>
+            <div style="text-align: center; margin: 20px 0;">
+                <p><strong>One-time payment: $4.99 USD</strong></p>
+                <p style="font-size: 12px; color: #666;">≈ PKR 1,400</p>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-premium" onclick="processUpgrade()">💳 Upgrade Now</button>
+                <button class="btn btn-danger" onclick="hideUpgradeModal()">Maybe Later</button>
+            </div>
+            <p style="font-size: 12px; text-align: center; margin-top: 15px;">Payment via EasyPaisa/JazzCash coming soon</p>
+        </div>
+    </div>
+    
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // App Data
+        let currentOrder = {};
+        let allOrders = [];
+        let allCustomers = [];
+        let businessSettings = {
+            name: "My Business",
+            logo: "",
+            phone: "",
+            address: "",
+            email: "",
+            footer: "Thank you for your business!"
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('orderDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('invoiceNo').value = generateInvoiceNumber();
+            
+            loadAllData();
+            loadBusinessSettings();
+            updateStats();
+            calculateTotal();
+            updateBusinessDisplay();
+            
+            document.getElementById('searchOrders').addEventListener('input', searchOrders);
+            document.getElementById('searchCustomers').addEventListener('input', searchCustomers);
+        });
+        
+        // Business Settings Functions
+        function loadBusinessSettings() {
+            const saved = localStorage.getItem('businessSettings');
+            if (saved) {
+                businessSettings = JSON.parse(saved);
+                document.getElementById('businessName').value = businessSettings.name;
+                document.getElementById('businessLogo').value = businessSettings.logo || '';
+                document.getElementById('businessPhone').value = businessSettings.phone || '';
+                document.getElementById('businessAddress').value = businessSettings.address || '';
+                document.getElementById('businessEmail').value = businessSettings.email || '';
+                document.getElementById('businessFooter').value = businessSettings.footer || '';
+            }
+            updateBusinessDisplay();
+        }
+        
+        function saveBusinessSettings() {
+            businessSettings = {
+                name: document.getElementById('businessName').value || "My Business",
+                logo: document.getElementById('businessLogo').value,
+                phone: document.getElementById('businessPhone').value,
+                address: document.getElementById('businessAddress').value,
+                email: document.getElementById('businessEmail').value,
+                footer: document.getElementById('businessFooter').value || "Thank you for your business!"
+            };
+            localStorage.setItem('businessSettings', JSON.stringify(businessSettings));
+            updateBusinessDisplay();
+            showToast('✅ Business settings saved!');
+        }
+        
+        function updateBusinessDisplay() {
+            document.getElementById('businessNameDisplay').innerHTML = businessSettings.name || "My Business";
+            if (businessSettings.logo) {
+                const logoImg = document.getElementById('logoImage');
+                logoImg.src = businessSettings.logo;
+                logoImg.style.display = 'block';
+            }
+            let details = '';
+            if (businessSettings.phone) details += `📞 ${businessSettings.phone} | `;
+            if (businessSettings.email) details += `✉️ ${businessSettings.email}`;
+            document.getElementById('businessDetailsDisplay').innerHTML = details;
+        }
+        
+        // Invoice Functions
+        function generateInvoiceNumber() {
+            const now = new Date();
+            return 'INV-' + now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+        }
+        
+        function addProduct() {
+            const container = document.getElementById('productsContainer');
+            const div = document.createElement('div');
+            div.className = 'product-row';
+            div.innerHTML = `<div class="product-inputs"><input type="text" class="productName" placeholder="Item Name"><input type="number" class="productQty" placeholder="Qty" value="1"><input type="number" class="productPrice" placeholder="Price (PKR)"></div><button class="btn btn-danger btn-small" onclick="removeProduct(this)">Remove</button>`;
+            container.appendChild(div);
+            calculateTotal();
+        }
+        
+        function removeProduct(btn) {
+            if (document.querySelectorAll('.product-row').length > 1) {
+                btn.closest('.product-row').remove();
+                calculateTotal();
+            }
+        }
+        
+        function calculateTotal() {
+            let subtotal = 0;
+            document.querySelectorAll('.product-row').forEach(row => {
+                const qty = parseFloat(row.querySelector('.productQty').value) || 0;
+                const price = parseFloat(row.querySelector('.productPrice').value) || 0;
+                subtotal += qty * price;
+            });
+            const discount = parseFloat(document.getElementById('discount').value) || 0;
+            const shipping = parseFloat(document.getElementById('shipping').value) || 0;
+            const advance = parseFloat(document.getElementById('advanceAmount').value) || 0;
+            const grandTotal = subtotal - discount + shipping;
+            const balance = Math.max(0, grandTotal - advance);
+            
+            document.getElementById('subtotalDisplay').textContent = subtotal.toFixed(2) + ' PKR';
+            document.getElementById('discountDisplay').textContent = discount.toFixed(2) + ' PKR';
+            document.getElementById('shippingDisplay').textContent = shipping.toFixed(2) + ' PKR';
+            document.getElementById('advanceDisplay').textContent = advance.toFixed(2) + ' PKR';
+            document.getElementById('balanceDisplay').textContent = balance.toFixed(2) + ' PKR';
+            
+            return { subtotal, discount, shipping, advance, grandTotal, balance };
+        }
+        
+        function saveOrder() {
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+            if (!name || !phone) { showToast('Please enter customer name and phone!', true); return false; }
+            
+            const products = [];
+            document.querySelectorAll('.product-row').forEach(row => {
+                const pname = row.querySelector('.productName').value.trim();
+                const qty = parseFloat(row.querySelector('.productQty').value) || 0;
+                const price = parseFloat(row.querySelector('.productPrice').value) || 0;
+                if (pname && price > 0) products.push({ name: pname, qty, price, total: qty*price });
+            });
+            if (products.length === 0) { showToast('Add at least one item!', true); return false; }
+            
+            const totals = calculateTotal();
+            
+            currentOrder = {
+                id: Date.now().toString(),
+                customer: { name, phone, address: document.getElementById('customerAddress').value },
+                products: products,
+                payment: {
+                    method: document.getElementById('paymentMethodSelect').value,
+                    advanceAmount: totals.advance
+                },
+                details: {
+                    invoiceNo: document.getElementById('invoiceNo').value,
+                    date: document.getElementById('orderDate').value,
+                    discount: totals.discount,
+                    shipping: totals.shipping,
+                    subtotal: totals.subtotal,
+                    total: totals.grandTotal,
+                    advancePaid: totals.advance,
+                    balanceDue: totals.balance,
+                    notes: document.getElementById('invoiceNotes').value
+                }
+            };
+            
+            allOrders.unshift(currentOrder);
+            updateCustomerDatabase(currentOrder);
+            saveAllData();
+            showToast('✅ Invoice saved!');
+            updateStats();
+            setTimeout(() => switchTab('orders'), 500);
+            return true;
+        }
+        
+        function updateCustomerDatabase(order) {
+            const idx = allCustomers.findIndex(c => c.phone === order.customer.phone);
+            if (idx === -1) {
+                allCustomers.push({ 
+                    name: order.customer.name, 
+                    phone: order.customer.phone, 
+                    address: order.customer.address,
+                    totalOrders: 1, 
+                    totalSpent: order.details.total,
+                    lastOrder: order.details.date
+                });
+            } else {
+                allCustomers[idx].totalOrders++;
+                allCustomers[idx].totalSpent += order.details.total;
+                allCustomers[idx].lastOrder = order.details.date;
+            }
+        }
+        
+        function loadAllData() {
+            const savedOrders = localStorage.getItem('easyInvoiceOrders');
+            if (savedOrders) allOrders = JSON.parse(savedOrders);
+            const savedCustomers = localStorage.getItem('easyInvoiceCustomers');
+            if (savedCustomers) allCustomers = JSON.parse(savedCustomers);
+        }
+        
+        function saveAllData() {
+            localStorage.setItem('easyInvoiceOrders', JSON.stringify(allOrders));
+            localStorage.setItem('easyInvoiceCustomers', JSON.stringify(allCustomers));
+        }
+        
+        function updateStats() {
+            document.getElementById('ordersCount').textContent = allOrders.length;
+            document.getElementById('customersCount').textContent = allCustomers.length;
+            const revenue = allOrders.reduce((sum, order) => sum + order.details.total, 0);
+            document.getElementById('revenueCount').textContent = revenue.toFixed(2);
+        }
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            if (tabName === 'orders') loadOrdersCards();
+            if (tabName === 'customers') loadCustomersCards();
+        }
+        
+        function loadOrdersCards() {
+            const container = document.getElementById('ordersContainer');
+            if (allOrders.length === 0) { container.innerHTML = '<div class="empty-state" style="text-align:center;padding:40px;">No invoices yet</div>'; return; }
+            
+            let html = '';
+            allOrders.forEach(order => {
+                html += `<div class="card" style="margin-bottom:10px;">
+                    <div><strong>${order.details.invoiceNo}</strong> | ${order.details.date}</div>
+                    <div>${order.customer.name} | ${order.customer.phone}</div>
+                    <div>Total: ${order.details.total.toFixed(2)} PKR | ${order.payment.method}</div>
+                    <div style="margin-top:10px">
+                        <button class="btn btn-small btn-primary" onclick="viewOrder('${order.id}')">View</button>
+                        <button class="btn btn-small btn-whatsapp" onclick="shareOrder('${order.id}')">WhatsApp</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteOrder('${order.id}')">Delete</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+        
+        function loadCustomersCards() {
+            const container = document.getElementById('customersContainer');
+            if (allCustomers.length === 0) { container.innerHTML = '<div class="empty-state" style="text-align:center;padding:40px;">No customers yet</div>'; return; }
+            
+            let html = '';
+            allCustomers.forEach(cust => {
+                html += `<div class="card" style="margin-bottom:10px;">
+                    <div><strong>${cust.name}</strong> | ${cust.phone}</div>
+                    <div>Invoices: ${cust.totalOrders} | Total: ${cust.totalSpent.toFixed(2)} PKR</div>
+                    <div style="margin-top:10px">
+                        <button class="btn btn-small btn-whatsapp" onclick="whatsAppCustomer('${cust.phone}')">WhatsApp</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteCustomer('${cust.phone}')">Delete</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+        
+        function viewOrder(id) {
+            currentOrder = allOrders.find(o => o.id === id);
+            viewInvoice();
+            switchTab('create');
+        }
+        
+        function shareOrder(id) {
+            const order = allOrders.find(o => o.id === id);
+            const msg = `*Invoice ${order.details.invoiceNo}*\n\nDear ${order.customer.name},\n\nTotal Amount: ${order.details.total.toFixed(2)} PKR\nPayment: ${order.payment.method}\n\n${businessSettings.footer || "Thank you for your business!"}\n\n${businessSettings.name}`;
+            window.open(`https://wa.me/${order.customer.phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+        
+        function deleteOrder(id) {
+            if (confirm('Delete this invoice?')) {
+                allOrders = allOrders.filter(o => o.id !== id);
+                saveAllData();
+                updateStats();
+                loadOrdersCards();
+                showToast('Invoice deleted');
+            }
+        }
+        
+        function deleteCustomer(phone) {
+            if (confirm('Delete customer and all their invoices?')) {
+                allOrders = allOrders.filter(o => o.customer.phone !== phone);
+                allCustomers = allCustomers.filter(c => c.phone !== phone);
+                saveAllData();
+                updateStats();
+                loadCustomersCards();
+                showToast('Customer deleted');
+            }
+        }
+        
+        function whatsAppCustomer(phone) {
+            const cust = allCustomers.find(c => c.phone === phone);
+            const msg = `Dear ${cust.name},\n\nThank you for your business!\n\nTotal Invoices: ${cust.totalOrders}\nTotal Spent: ${cust.totalSpent.toFixed(2)} PKR\n\n${businessSettings.footer}\n${businessSettings.name}`;
+            window.open(`https://wa.me/${phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+        
+        function viewInvoice() {
+            if (!currentOrder.customer) { showToast('Save invoice first!', true); return; }
+            
+            let html = `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    ${businessSettings.logo ? `<img src="${businessSettings.logo}" style="max-width: 80px; margin-bottom: 10px;">` : ''}
+                    <h2 style="margin: 0;">${businessSettings.name}</h2>
+                    <div style="font-size: 14px; color: #666;">
+                        ${businessSettings.phone ? `📞 ${businessSettings.phone}` : ''}
+                        ${businessSettings.email ? ` | ✉️ ${businessSettings.email}` : ''}
+                        ${businessSettings.address ? `<br>📍 ${businessSettings.address}` : ''}
+                    </div>
+                </div>
+                <hr>
+                <h3>INVOICE: ${currentOrder.details.invoiceNo}</h3>
+                <p><strong>Date:</strong> ${currentOrder.details.date}</p>
+                <p><strong>Customer:</strong> ${currentOrder.customer.name}<br>
+                <strong>Phone:</strong> ${currentOrder.customer.phone}<br>
+                <strong>Address:</strong> ${currentOrder.customer.address || 'N/A'}</p>
+                <table border="1" cellpadding="8" style="width:100%; border-collapse: collapse; margin: 15px 0;">
+                    <tr style="background: #2c3e50; color: white;">
+                        <th>Item</th><th>Qty</th><th>Price</th><th>Total</th>
+                    </tr>`;
+            
+            currentOrder.products.forEach(p => {
+                html += `<tr><td>${p.name}</td><td>${p.qty}</td><td>${p.price.toFixed(2)}</td><td>${p.total.toFixed(2)}</td></tr>`;
+            });
+            
+            html += `<tr style="background: #f8f9fa;">
+                        <td colspan="3" style="text-align: right;"><strong>Subtotal:</strong></td>
+                        <td><strong>${currentOrder.details.subtotal.toFixed(2)} PKR</strong></td>
+                     </tr>`;
+            
+            if (currentOrder.details.discount > 0) {
+                html += `<tr><td colspan="3" style="text-align: right;">Discount:</td><td>-${currentOrder.details.discount.toFixed(2)} PKR</td></tr>`;
+            }
+            
+            if (currentOrder.details.shipping > 0) {
+                html += `<tr><td colspan="3" style="text-align: right;">Extra Charges:</td><td>${currentOrder.details.shipping.toFixed(2)} PKR</td></tr>`;
+            }
+            
+            if (currentOrder.details.advancePaid > 0) {
+                html += `<tr><td colspan="3" style="text-align: right;">Amount Paid:</td><td>-${currentOrder.details.advancePaid.toFixed(2)} PKR</td></tr>`;
+            }
+            
+            html += `<tr style="background: #2c3e50; color: white; font-weight: bold;">
+                        <td colspan="3" style="text-align: right;">BALANCE DUE:</td>
+                        <td>${currentOrder.details.balanceDue.toFixed(2)} PKR</td>
+                     </tr>
+                </table>`;
+            
+            if (currentOrder.details.notes) {
+                html += `<p><strong>Notes:</strong> ${currentOrder.details.notes}</p>`;
+            }
+            
+            html += `<div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                        ${businessSettings.footer || "Thank you for your business!"}
+                    </div>`;
+            
+            document.getElementById('invoicePreview').innerHTML = html;
+            document.getElementById('invoicePreview').style.display = 'block';
+            document.getElementById('invoicePreview').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function shareInvoice() {
+            if (!currentOrder.customer) { showToast('Save invoice first!', true); return; }
+            const msg = `*Invoice ${currentOrder.details.invoiceNo}*\n\nCustomer: ${currentOrder.customer.name}\nTotal: ${currentOrder.details.total.toFixed(2)} PKR\nPayment: ${currentOrder.payment.method}\n\n${businessSettings.footer}\n${businessSettings.name}`;
+            window.open(`https://wa.me/${currentOrder.customer.phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+        
+        function exportData() {
+            const data = JSON.stringify({ orders: allOrders, customers: allCustomers, business: businessSettings });
+            const blob = new Blob([data], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invoice_data_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Data exported!');
+        }
+        
+        function showImportModal() { document.getElementById('importModal').style.display = 'flex'; }
+        function hideImportModal() { document.getElementById('importModal').style.display = 'none'; document.getElementById('importData').value = ''; }
+        
+        function importData() {
+            try {
+                const data = JSON.parse(document.getElementById('importData').value);
+                if (data.orders) allOrders = data.orders;
+                if (data.customers) allCustomers = data.customers;
+                if (data.business) { businessSettings = data.business; saveBusinessSettings(); }
+                saveAllData();
+                updateStats();
+                hideImportModal();
+                showToast('Data imported!');
+            } catch(e) { showToast('Invalid data!', true); }
+        }
+        
+        function clearAllData() {
+            if (confirm('⚠️ WARNING: Delete ALL invoices and customers?')) {
+                if (confirm('Type "DELETE" to confirm:')) {
+                    const confirmText = prompt('Type DELETE to confirm:');
+                    if (confirmText === 'DELETE') {
+                        allOrders = [];
+                        allCustomers = [];
+                        saveAllData();
+                        updateStats();
+                        showToast('All data cleared');
+                    }
+                }
+            }
+        }
+        
+        function clearForm() {
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('customerAddress').value = '';
+            document.getElementById('discount').value = '0';
+            document.getElementById('shipping').value = '0';
+            document.getElementById('advanceAmount').value = '0';
+            document.getElementById('invoiceNotes').value = '';
+            document.getElementById('invoiceNo').value = generateInvoiceNumber();
+            document.getElementById('productsContainer').innerHTML = '';
+            addProduct();
+            calculateTotal();
+        }
+        
+        function searchOrders() {
+            const term = document.getElementById('searchOrders').value.toLowerCase();
+            document.querySelectorAll('#ordersContainer .card').forEach(card => {
+                card.style.display = card.innerText.toLowerCase().includes(term) ? '' : 'none';
+            });
+        }
+        
+        function searchCustomers() {
+            const term = document.getElementById('searchCustomers').value.toLowerCase();
+            document.querySelectorAll('#customersContainer .card').forEach(card => {
+                card.style.display = card.innerText.toLowerCase().includes(term) ? '' : 'none';
+            });
+        }
+        
+        function showUpgradeModal() { document.getElementById('upgradeModal').style.display = 'flex'; }
+        function hideUpgradeModal() { document.getElementById('upgradeModal').style.display = 'none'; }
+        
+        function processUpgrade() {
+            showToast('⭐ Upgrade feature coming soon!');
+            hideUpgradeModal();
+        }
+        
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast' + (isError ? ' error' : '');
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+    </script>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('✅ Service Worker registered!'))
+                    .catch(err => console.log('❌ Service Worker failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>
